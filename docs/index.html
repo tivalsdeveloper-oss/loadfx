@@ -1,0 +1,28 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>loadfx Documentation</title><style>:root{--bg:#080b12;--panel:#101722;--text:#e8eef7;--muted:#91a0b5;--line:#253247;--accent:#61dafb}*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--text);font:16px/1.65 system-ui,sans-serif}header{padding:70px 8%;border-bottom:1px solid var(--line)}h1{font-size:64px;letter-spacing:-3px;margin:0}h1 span{color:var(--accent)}main{max-width:1000px;margin:auto;padding:40px 7%}h2{margin-top:55px}pre{background:#05080d;border:1px solid var(--line);border-radius:10px;padding:18px;overflow:auto;color:#dce8f5}code{font-family:monospace}a{color:var(--accent)}.card{display:inline-block;vertical-align:top;width:30%;margin:1%;padding:20px;background:var(--panel);border:1px solid var(--line);border-radius:12px}@media(max-width:700px){.card{width:100%;margin:8px 0}h1{font-size:46px}}</style></head><body><header><h1>load<span>fx</span></h1><p>Python terminal loading effects, text effects, progress bars and flexible interactive menus.</p><p>Version 1.0.0 · Python 3.8+ · Zero runtime dependencies</p></header><main><div class="card"><b>Loading</b><br>dots, spinner, arrows, pulse, circle, square, braille and custom frames.</div><div class="card"><b>TextFX</b><br>colors, formatting, typing, rainbow, RGB, gradients, banners and boxes.</div><div class="card"><b>Menus</b><br>single lists, dictionaries, multiple dictionaries and nested menus.</div><h2>Installation</h2><pre><code>python -m pip install loadfx</code></pre><h2>Quick Start</h2><pre><code>from loadfx import Loader, TextFX, Menu
+import time
+
+print(TextFX.rainbow("LOADFX"))
+with Loader("Starting", effect="dots"):
+    time.sleep(2)
+choice = Menu({
+    "Start": "start",
+    "Settings": "settings",
+    "Exit": "exit"
+}).show()
+print(TextFX.green(f"Selected: {choice}"))</code></pre><h2>Loading Effects</h2><pre><code>Loader("Loading...", effect="dots")
+Loader("Working", effect="spinner")
+Loader("Custom", effect=["◐", "◓", "◑", "◒"])</code></pre><h2>Progress Bar</h2><pre><code>from loadfx import ProgressBar
+bar = ProgressBar(total=100, text="Installing")
+for i in range(101):
+    bar.update(i)</code></pre><h2>TextFX</h2><pre><code>print(TextFX.red("Error"))
+print(TextFX.green("Success"))
+print(TextFX.bold("Important"))
+print(TextFX.rainbow("LOADFX"))
+print(TextFX.gradient("Gradient"))
+TextFX.typewrite("Typing effect", speed=0.04)
+print(TextFX.box("Hello"))
+print(TextFX.banner("LOADFX"))</code></pre><h2>Menus</h2><h3>List</h3><pre><code>Menu(["Home", "Projects", "Settings"]).show()</code></pre><h3>Dictionary</h3><pre><code>Menu({"Python":"python", "Web":"web", "AI":"ai"}).show()</code></pre><h3>Multiple dictionaries</h3><pre><code>Menu([{"Python":"python", "JavaScript":"js"}, {"AI":"ai", "Web":"web"}]).show()</code></pre><h3>Nested</h3><pre><code>Menu({
+    "Programming": {"Python":"python", "JavaScript":"js"},
+    "Projects": {"New":"new", "Open":"open"}
+}).show()</code></pre><h2>API</h2><p><b>Loader</b> — animated terminal status indicators.</p><p><b>Spinner</b> — Loader-compatible spinner class.</p><p><b>ProgressBar</b> — terminal progress display.</p><p><b>TextFX</b> — text styling and effects.</p><p><b>Menu</b> — interactive list/dictionary/nested menus.</p><h2>More</h2><p>See the <a href="../README.md">README</a> and <a href="../examples/demo.py">examples</a> in this repository.</p><hr><p>loadfx · Tivalsdeveloper · MIT License</p></main></body></html>
