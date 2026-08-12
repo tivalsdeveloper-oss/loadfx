@@ -4,14 +4,19 @@ build-backend="setuptools.build_meta"
 
 [project]
 name="loadfx"
-version="2.1.0"
-description="Zero-dependency Python terminal effects and UI toolkit"
+version="2.2.0"
+description="Zero-dependency Python terminal effects and UI toolkit with styled progress bars"
 readme="README.md"
 requires-python=">=3.8"
 license={text="MIT"}
 authors=[{name="Tivalsdeveloper"}]
-keywords=["terminal","cli","tui","spinner","loading","menu","text-effects","progress-bar","forms","dashboard"]
-classifiers=["Programming Language :: Python :: 3","Programming Language :: Python :: 3 :: Only","License :: OSI Approved :: MIT License","Operating System :: OS Independent","Environment :: Console","Topic :: Software Development :: User Interfaces"]
+keywords=["terminal","cli","tui","spinner","loading","menu","text-effects","progress-bar","progress","colors","forms","dashboard"]
+classifiers=["Development Status :: 4 - Beta","Programming Language :: Python :: 3","Programming Language :: Python :: 3 :: Only","License :: OSI Approved :: MIT License","Operating System :: OS Independent","Environment :: Console","Topic :: Software Development :: User Interfaces"]
+
+[project.urls]
+Homepage="https://github.com/tivalsdeveloper-oss/loadfx"
+Repository="https://github.com/tivalsdeveloper-oss/loadfx"
+Issues="https://github.com/tivalsdeveloper-oss/loadfx/issues"
 
 [project.scripts]
 loadfx="loadfx.cli:main"
