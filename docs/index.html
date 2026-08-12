@@ -1,20 +1,85 @@
-<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>loadfx 2.0 Documentation</title><style>:root{--bg:#070a10;--panel:#101722;--text:#e8eef7;--muted:#91a0b5;--line:#263449;--accent:#61dafb}*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--text);font:16px/1.65 system-ui,sans-serif}main{max-width:1050px;margin:auto;padding:60px 22px}h1{font-size:68px;letter-spacing:-4px;margin:0}h1 span{color:var(--accent)}h2{margin-top:55px}h3{margin-top:32px}pre{background:#03060a;border:1px solid var(--line);border-radius:10px;padding:18px;overflow:auto}code{font-family:monospace}.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:14px}.card{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:20px}a{color:var(--accent)}table{width:100%;border-collapse:collapse;background:var(--panel)}td,th{padding:12px;border-bottom:1px solid var(--line);text-align:left}th{color:var(--accent)}</style></head><body><main><p>PYTHON TERMINAL TOOLKIT</p><h1>load<span>fx</span> 2.0</h1><p>Zero-dependency terminal effects and UI toolkit.</p><div class="grid"><div class="card"><b>24+ loading effects</b><br>Wave, matrix, pulse, orbit, bars, custom frames and more.</div><div class="card"><b>Interactive UI</b><br>Menus, multi-select, tables, panels, trees and dashboards.</div><div class="card"><b>Developer tools</b><br>Themes, notifications, logging, tasks, animations and CLI.</div></div><h2>Install</h2><pre>python -m pip install loadfx</pre><h2>Quick start</h2><pre>from loadfx import Loader, TextFX, Menu
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="description" content="loadfx 2.0 — zero-dependency Python terminal effects and UI toolkit.">
+<title>loadfx 2.0 — Documentation</title>
+<style>
+:root{--bg:#070a0f;--panel:#0d131d;--panel2:#111a27;--text:#edf4ff;--muted:#91a0b5;--line:#223044;--accent:#61dafb;--accent2:#a78bfa;--good:#62e6a5;--code:#05080d}
+*{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;background:radial-gradient(circle at 75% 0%,#132238 0,#070a0f 35%);color:var(--text);font:16px/1.7 Inter,system-ui,-apple-system,Segoe UI,sans-serif}.layout{display:grid;grid-template-columns:260px 1fr;min-height:100vh}aside{position:sticky;top:0;height:100vh;padding:28px 18px;border-right:1px solid var(--line);background:#080c13}.brand{font-size:26px;font-weight:900;letter-spacing:-1px}.brand span{color:var(--accent)}.badge{display:inline-block;margin:10px 0 25px;padding:3px 9px;border:1px solid var(--line);border-radius:99px;color:var(--muted);font-size:12px}nav a{display:block;padding:8px 10px;color:var(--muted);border-radius:8px;text-decoration:none}nav a:hover{background:var(--panel);color:var(--text)}main{max-width:1100px;width:100%;padding:70px 7vw 100px}.hero{padding:35px 0 55px;border-bottom:1px solid var(--line)}.eyebrow{color:var(--good);font-size:12px;font-weight:800;letter-spacing:1.8px;text-transform:uppercase}h1{font-size:clamp(50px,8vw,88px);line-height:.95;letter-spacing:-5px;margin:15px 0 22px}h1 span{color:var(--accent)}h2{font-size:31px;letter-spacing:-1px;margin:60px 0 14px}h3{font-size:20px;margin:30px 0 8px}p{color:#c4cfdd}.hero p{font-size:20px;max-width:760px}.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-top:30px}.card{background:linear-gradient(145deg,var(--panel),var(--panel2));border:1px solid var(--line);border-radius:14px;padding:20px}.card b{display:block;margin-bottom:5px}.muted{color:var(--muted)}pre{background:var(--code);border:1px solid var(--line);border-radius:12px;padding:18px;overflow:auto;color:#dce7f5}code{font-family:ui-monospace,SFMono-Regular,Consolas,monospace;font-size:13px}.inline{background:var(--panel2);border:1px solid var(--line);padding:2px 6px;border-radius:5px}table{width:100%;border-collapse:collapse;background:var(--panel);border:1px solid var(--line)}th,td{text-align:left;padding:12px;border-bottom:1px solid var(--line)}th{color:var(--accent)}.callout{border-left:3px solid var(--accent);background:var(--panel);padding:14px 17px;margin:20px 0}.pills{display:flex;flex-wrap:wrap;gap:7px}.pill{padding:5px 9px;background:var(--panel);border:1px solid var(--line);border-radius:99px;color:#cbd7e6;font:12px ui-monospace,monospace}.buttons{display:flex;gap:10px;flex-wrap:wrap;margin-top:24px}.btn{display:inline-block;padding:10px 15px;border:1px solid var(--line);border-radius:9px;color:var(--text);text-decoration:none;background:var(--panel)}.btn.primary{background:#10212d;border-color:#24506a;color:var(--accent)}footer{margin-top:70px;padding-top:25px;border-top:1px solid var(--line);color:var(--muted)}
+@media(max-width:800px){.layout{display:block}aside{position:relative;height:auto;border-right:0;border-bottom:1px solid var(--line)}nav{display:flex;flex-wrap:wrap}.grid{grid-template-columns:1fr}main{padding:40px 20px}h1{letter-spacing:-3px}}
+</style>
+</head>
+<body>
+<div class="layout">
+<aside><div class="brand">load<span>fx</span></div><div class="badge">v2.0.0 · Python 3.8+</div><nav>
+<a href="#start">Getting started</a><a href="#effects">Loading effects</a><a href="#progress">Progress</a><a href="#text">TextFX</a><a href="#menus">Menus</a><a href="#widgets">Widgets</a><a href="#themes">Themes</a><a href="#tasks">Tasks & logging</a><a href="#cli">CLI</a><a href="#api">API</a>
+</nav></aside>
+<main>
+<section class="hero" id="start"><div class="eyebrow">Python terminal toolkit · v2.0.0</div><h1>load<span>fx</span></h1><p>Build polished command-line applications with loading animations, progress displays, styled text, interactive menus and terminal widgets — with zero runtime dependencies.</p><div class="buttons"><a class="btn primary" href="https://github.com/tivalsdeveloper-oss/loadfx">GitHub</a><a class="btn" href="https://pypi.org/project/loadfx/">PyPI</a></div><div class="grid"><div class="card"><b>24+ effects</b><span class="muted">Spinners, waves, matrix, orbit, bars, custom frames and more.</span></div><div class="card"><b>Interactive UI</b><span class="muted">Menus, multi-select, tables, panels, trees and dashboards.</span></div><div class="card"><b>Developer tooling</b><span class="muted">Themes, notifications, logging, tasks, animations and CLI commands.</span></div></div></section>
+<section><h2>Installation</h2><pre><code>python -m pip install loadfx</code></pre><div class="callout"><b>Upgrade from v1:</b> <code>python -m pip install --upgrade loadfx</code></div></section>
+<section id="effects"><h2>Loading effects</h2><p>Use a built-in effect or pass your own sequence of frames.</p><pre><code>from loadfx import Loader
 import time
 
-print(TextFX.rainbow("LOADFX"))
-with Loader("Loading", effect="wave"):
-    time.sleep(2)
+with Loader("Downloading", effect="matrix"):
+    time.sleep(2)</code></pre><div class="pills"><span class="pill">dots</span><span class="pill">spinner</span><span class="pill">line</span><span class="pill">arrows</span><span class="pill">bounce</span><span class="pill">pulse</span><span class="pill">circle</span><span class="pill">square</span><span class="pill">braille</span><span class="pill">clock</span><span class="pill">wave</span><span class="pill">bars</span><span class="pill">blocks</span><span class="pill">grow</span><span class="pill">shrink</span><span class="pill">orbit</span><span class="pill">arc</span><span class="pill">snake</span><span class="pill">ping</span><span class="pill">heart</span><span class="pill">star</span><span class="pill">matrix</span><span class="pill">scan</span><span class="pill">moon</span></div></section>
+<section id="progress"><h2>Progress bars</h2><pre><code>from loadfx import ProgressBar
 
-choice = Menu({"Start":"start", "Settings":"settings", "Exit":"exit"}).show()</pre><h2>Loading effects</h2><p><code>dots</code>, <code>spinner</code>, <code>line</code>, <code>arrows</code>, <code>bounce</code>, <code>pulse</code>, <code>circle</code>, <code>square</code>, <code>braille</code>, <code>clock</code>, <code>wave</code>, <code>bars</code>, <code>blocks</code>, <code>grow</code>, <code>shrink</code>, <code>orbit</code>, <code>arc</code>, <code>snake</code>, <code>ping</code>, <code>heart</code>, <code>star</code>, <code>matrix</code>, <code>scan</code>, <code>moon</code>.</p><h2>Progress</h2><pre>from loadfx import ProgressBar
-bar=ProgressBar(100,show_eta=True,show_speed=True)
-for i in range(101): bar.update(i)</pre><h2>Widgets</h2><pre>from loadfx import Table, Panel, Tree
-Table(["Name","Status"], [["loadfx","Active"]], style="rounded").show()
+bar = ProgressBar(100, show_eta=True, show_speed=True)
+for i in range(101):
+    bar.update(i)</code></pre><p>Configure width, fill/empty characters, labels, percentage, ETA and processing speed.</p></section>
+<section id="text"><h2>TextFX</h2><pre><code>from loadfx import TextFX
+
+print(TextFX.rainbow("LOADFX"))
+print(TextFX.bold("Important"))
+print(TextFX.rgb("Custom RGB", 80, 180, 255))
+TextFX.typewrite("Hello from loadfx", speed=0.03)
+print(TextFX.box("Application ready"))</code></pre><p>Includes terminal colors, bold/dim/underline/blink/reverse formatting, RGB, gradients, rainbow text, typing, banners, boxes and centering.</p></section>
+<section id="menus"><h2>Menus</h2><h3>List</h3><pre><code>from loadfx import Menu
+choice = Menu(["Home", "Projects", "Settings", "Exit"]).show()</code></pre><h3>Dictionary</h3><pre><code>choice = Menu({
+    "Create project": "create",
+    "Open project": "open",
+    "Exit": "exit"
+}).show()</code></pre><h3>Nested data and multi-select</h3><pre><code>from loadfx import MultiMenu
+selected = MultiMenu([
+    "Python", "HTML", "CSS", "JavaScript"
+]).show()</code></pre></section>
+<section id="widgets"><h2>Terminal widgets</h2><pre><code>from loadfx import Table, Panel, Tree
+
+Table(
+    ["Name", "Status"],
+    [["loadfx", "Active"]],
+    style="rounded"
+).show()
+
 Panel("Terminal toolkit", title="loadfx").show()
-Tree("Project").add("src/loadfx").add("tests").show()</pre><h2>Multi-select</h2><pre>from loadfx import MultiMenu
-selected=MultiMenu(["Python","HTML","CSS","JavaScript"]).show()</pre><h2>Themes, notifications and logging</h2><pre>from loadfx import Theme, notify, Logger
+
+Tree("Project").add("src/loadfx").add("tests").show()</code></pre><table><tr><th>Widget</th><th>Use</th></tr><tr><td>Table</td><td>Structured rows and columns</td></tr><tr><td>Panel</td><td>Framed information blocks</td></tr><tr><td>Tree</td><td>Hierarchical project/file views</td></tr><tr><td>Dashboard</td><td>Live application metrics</td></tr></table></section>
+<section id="themes"><h2>Themes & presentation</h2><pre><code>from loadfx import Theme, notify
+
 Theme.use("cyberpunk")
 notify.success("Build complete")
-Logger().info("Application started")</pre><h2>CLI</h2><pre>loadfx version
+notify.warning("Low disk space")
+notify.error("Connection failed")</code></pre><p>Use built-in themes or extend the presentation layer for your own terminal applications.</p></section>
+<section id="tasks"><h2>Tasks & logging</h2><pre><code>from loadfx import Tasks, Logger
+
+tasks = Tasks()
+tasks.add("Download")
+tasks.add("Extract")
+tasks.add("Install")
+tasks.run()
+
+log = Logger()
+log.info("Application started")
+log.success("Build complete")
+log.warning("Cache is almost full")
+log.error("Connection failed")</code></pre></section>
+<section id="cli"><h2>CLI</h2><pre><code>loadfx version
 loadfx effects
 loadfx themes
-loadfx demo</pre><h2>API</h2><table><tr><th>Component</th><th>Purpose</th></tr><tr><td>Loader / ProgressBar</td><td>Loading and progress displays</td></tr><tr><td>TextFX / Animation</td><td>Styled and animated text</td></tr><tr><td>Menu / MultiMenu</td><td>Interactive selection</td></tr><tr><td>Table / Panel / Tree / Dashboard</td><td>Terminal widgets</td></tr><tr><td>Theme / Logger / notify</td><td>App presentation utilities</td></tr><tr><td>Tasks / Terminal</td><td>Workflow and terminal helpers</td></tr></table><p>Python 3.8+ · MIT License · Tivalsdeveloper</p></main></body></html>
+loadfx demo
+loadfx doctor</code></pre><p>The CLI provides quick access to demonstrations, effect lists, theme information and environment diagnostics.</p></section>
+<section id="api"><h2>API overview</h2><table><tr><th>Component</th><th>Purpose</th></tr><tr><td>Loader / Spinner</td><td>Animated terminal loading indicators</td></tr><tr><td>ProgressBar</td><td>Progress, ETA and speed display</td></tr><tr><td>TextFX / Animation</td><td>Styled and animated text</td></tr><tr><td>Menu / MultiMenu</td><td>Interactive selection</td></tr><tr><td>Table / Panel / Tree / Dashboard</td><td>Terminal widgets</td></tr><tr><td>Theme / Logger / notify</td><td>Presentation and diagnostics</td></tr><tr><td>Tasks / Terminal</td><td>Workflow and terminal helpers</td></tr></table></section>
+<footer><b>loadfx 2.0.0</b><br>Python 3.8+ · MIT License · Tivalsdeveloper<br><br>Documentation is deployed automatically from the <code>main</code> branch.</footer>
+</main></div></body></html>
