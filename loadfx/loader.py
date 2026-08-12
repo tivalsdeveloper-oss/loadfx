@@ -1,13 +1,11 @@
 import sys, time, threading
 from .colors import HIDE_CURSOR, SHOW_CURSOR, CLEAR_LINE, RESET
 
-FRAMES={
-"dots":["⠋","⠙","⠹","⠸","⠼","⠴","⠦","⠧","⠇","⠏"],"spinner":["|","/","-","\\"],"line":["─","\\","│","/"],"arrows":["←","↖","↑","↗","→","↘","↓","↙"],"bounce":["⠁","⠂","⠄","⠂"],"pulse":["●","○","●","◌"],"circle":["◐","◓","◑","◒"],"square":["▖","▘","▝","▗"],"braille":["⠋","⠙","⠚","⠒","⠂","⠒","⠲","⠴","⠦","⠧","⠇","⠏"],"clock":["🕐","🕑","🕒","🕓","🕔","🕕","🕖","🕗","🕘","🕙","🕚","🕛"],
-"wave":["▁","▂","▃","▄","▅","▆","▇","█","▇","▆","▅","▄","▃","▂"],"bars":["▏","▎","▍","▌","▋","▊","▉","█","▉","▊","▋","▌","▍","▎"],"blocks":["▖","▘","▝","▗","▄","▀","█","▀","▄"],"grow":[".","..","...","....","....."],"shrink":[".....","....","...","..","."],"orbit":["◴","◷","◶","◵"],"arc":["◜","◝","◞","◟"],"snake":["▰▱▱▱","▱▰▱▱","▱▱▰▱","▱▱▱▰"],"ping":["○","◌","◍","●","◍","◌"],"heart":["♡","♥","♡","♥"],"star":["✦","✧","✦","✧"],"matrix":["0","1","0","1","1","0"],"scan":["▏","▎","▍","▋","▊","▉","█","▉","▊","▋","▍","▎"],"moon":["◑","◒","◐","◓"]}
+FRAMES={"dots":["⠋","⠙","⠹","⠸","⠼","⠴","⠦","⠧","⠇","⠏"],"spinner":["|","/","-","\\"],"line":["─","\\","│","/"],"arrows":["←","↖","↑","↗","→","↘","↓","↙"],"bounce":["⠁","⠂","⠄","⠂"],"pulse":["●","○","●","◌"],"circle":["◐","◓","◑","◒"],"square":["▖","▘","▝","▗"],"braille":["⠋","⠙","⠚","⠒","⠂","⠒","⠲","⠴","⠦","⠧","⠇","⠏"],"clock":[str(i) for i in range(12)],"wave":["▁","▂","▃","▄","▅","▆","▇","█","▇","▆","▅","▄","▃","▂"],"bars":["▏","▎","▍","▌","▋","▊","▉","█","▉","▊","▋","▌","▍","▎"],"blocks":["▖","▘","▝","▗","▄","▀","█","▀","▄"],"grow":[".","..","...","....","....."],"shrink":[".....","....","...","..","."],"orbit":["◴","◷","◶","◵"],"arc":["◜","◝","◞","◟"],"snake":["▰▱▱▱","▱▰▱▱","▱▱▰▱","▱▱▱▰"],"ping":["○","◌","◍","●","◍","◌"],"heart":["♡","♥","♡","♥"],"star":["✦","✧","✦","✧"],"matrix":["0","1","0","1","1","0"],"scan":["▏","▎","▍","▋","▊","▉","█","▉","▋","▍","▎"],"moon":["◑","◒","◐","◓"]}
 
 class Loader:
-    def __init__(self,text="Loading...",effect="dots",interval=.08,color="",stream=None,hide_cursor=True):
-        self.text=str(text); self.effect=effect; self.interval=float(interval); self.color=color; self.stream=stream or sys.stdout; self.hide_cursor=hide_cursor; self._stop=threading.Event(); self._thread=None
+    def __init__(self,text="Loading...",effect="dots",interval=.08,color="",stream=None,hide_cursor=True,frames=None):
+        self.text=str(text); self.effect=frames if frames is not None else effect; self.interval=float(interval); self.color=color; self.stream=stream or sys.stdout; self.hide_cursor=hide_cursor; self._stop=threading.Event(); self._thread=None
     def _frames(self):
         if self.effect in FRAMES: return FRAMES[self.effect]
         if isinstance(self.effect,(list,tuple)) and self.effect: return list(self.effect)
@@ -31,8 +29,9 @@ class Loader:
         if self._thread: self._thread.join()
         if message is not None: self.stream.write(str(message)+"\n"); self.stream.flush()
         return self
-    def update(self,text=None):
+    def update(self,text=None,progress=None):
         if text is not None: self.text=str(text)
+        if progress is not None: self.progress=progress
         return self
     def __enter__(self): return self.start()
     def __exit__(self,exc_type,exc,tb): self.stop()
