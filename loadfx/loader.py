@@ -1,7 +1,14 @@
 import sys, time, threading
-from .colors import HIDE_CURSOR, SHOW_CURSOR, CLEAR_LINE, RESET
+from .colors import HIDE_CURSOR, SHOW_CURSOR, CLEAR_LINE, RESET, COLORS, BACKGROUNDS, color256, bg256
 
 FRAMES={"dots":["⠋","⠙","⠹","⠸","⠼","⠴","⠦","⠧","⠇","⠏"],"spinner":["|","/","-","\\"],"line":["─","\\","│","/"],"arrows":["←","↖","↑","↗","→","↘","↓","↙"],"bounce":["⠁","⠂","⠄","⠂"],"pulse":["●","○","●","◌"],"circle":["◐","◓","◑","◒"],"square":["▖","▘","▝","▗"],"braille":["⠋","⠙","⠚","⠒","⠂","⠒","⠲","⠴","⠦","⠧","⠇","⠏"],"clock":[str(i) for i in range(12)],"wave":["▁","▂","▃","▄","▅","▆","▇","█","▇","▆","▅","▄","▃","▂"],"bars":["▏","▎","▍","▌","▋","▊","▉","█","▉","▊","▋","▌","▍","▎"],"blocks":["▖","▘","▝","▗","▄","▀","█","▀","▄"],"grow":[".","..","...","....","....."],"shrink":[".....","....","...","..","."],"orbit":["◴","◷","◶","◵"],"arc":["◜","◝","◞","◟"],"snake":["▰▱▱▱","▱▰▱▱","▱▱▰▱","▱▱▱▰"],"ping":["○","◌","◍","●","◍","◌"],"heart":["♡","♥","♡","♥"],"star":["✦","✧","✦","✧"],"matrix":["0","1","0","1","1","0"],"scan":["▏","▎","▍","▋","▊","▉","█","▉","▋","▍","▎"],"moon":["◑","◒","◐","◓"]}
+
+PROGRESS_STYLES={
+    "classic":("█","░"), "blocks":("█","░"), "dots":("●","○"),
+    "dotline":("●","○"), "arrows":(">","-"), "squares":("■","□"),
+    "circles":("●","○"), "braille":("⣿","⣀"), "pulse":("●","·"),
+    "bars":("▰","▱"), "hash":("#","-"), "equals":("=","-"),
+}
 
 class Loader:
     def __init__(self,text="Loading...",effect="dots",interval=.08,color="",stream=None,hide_cursor=True,frames=None):
@@ -39,19 +46,65 @@ class Loader:
 class Spinner(Loader): pass
 
 class ProgressBar:
-    def __init__(self,total=100,width=30,text="Progress",fill="█",empty="░",color="",stream=None,show_percent=True,show_eta=False,show_speed=False):
+    """Terminal progress bar with styles, colors, ETA and speed reporting."""
+    def __init__(self,total=100,width=30,text="Progress",fill="█",empty="░",color="",stream=None,
+                 show_percent=True,show_eta=False,show_speed=False,style="classic",foreground=None,
+                 background=None,bg_color=None,custom_fill=None,custom_empty=None):
         if total<=0: raise ValueError("total must be greater than zero")
-        self.total=total; self.width=max(1,int(width)); self.text=str(text); self.fill=fill; self.empty=empty; self.color=color; self.stream=stream or sys.stdout; self.current=0; self.show_percent=show_percent; self.show_eta=show_eta; self.show_speed=show_speed; self.started_at=None
-    def update(self,value=None,step=None):
+        self.total=total; self.width=max(1,int(width)); self.text=str(text)
+        self.style=style.lower() if isinstance(style,str) else style
+        if self.style not in PROGRESS_STYLES and not isinstance(self.style,(tuple,list)):
+            raise ValueError(f"Unknown progress style: {style}. Available: {', '.join(PROGRESS_STYLES)}")
+        default_fill,default_empty=PROGRESS_STYLES.get(self.style,(fill,empty)) if isinstance(self.style,str) else (fill,empty)
+        self.fill=custom_fill if custom_fill is not None else default_fill
+        self.empty=custom_empty if custom_empty is not None else default_empty
+        self.color=color; self.foreground=foreground; self.background=bg_color or background
+        self.stream=stream or sys.stdout; self.current=0; self.show_percent=show_percent; self.show_eta=show_eta; self.show_speed=show_speed; self.started_at=None
+
+    @staticmethod
+    def _fg(value):
+        if value is None: return ""
+        if isinstance(value,int): return color256(value)
+        if isinstance(value,str): return COLORS.get(value.lower(),value)
+        return str(value)
+
+    @staticmethod
+    def _bg(value):
+        if value is None: return ""
+        if isinstance(value,int): return bg256(value)
+        if isinstance(value,str): return BACKGROUNDS.get(value.lower(),value)
+        return str(value)
+
+    def set_style(self,style):
+        if style not in PROGRESS_STYLES and not isinstance(style,(tuple,list)): raise ValueError(f"Unknown progress style: {style}")
+        self.style=style
+        if isinstance(style,str): self.fill,self.empty=PROGRESS_STYLES[style]
+        else: self.fill,self.empty=style
+        return self
+
+    def set_colors(self,foreground=None,background=None):
+        self.foreground=foreground; self.background=background; return self
+
+    def set_message(self,text): self.text=str(text); return self
+
+    def update(self,value=None,step=None,message=None,progress=None):
         if self.started_at is None: self.started_at=time.monotonic()
+        if message is not None: self.text=str(message)
+        if progress is not None: value=progress
         if value is not None: self.current=value
         elif step is not None: self.current+=step
-        self.current=max(0,min(self.current,self.total)); ratio=self.current/self.total; filled=int(self.width*ratio); bar=self.fill*filled+self.empty*(self.width-filled); parts=[f"{self.text} [{bar}]"]
+        self.current=max(0,min(self.current,self.total)); ratio=self.current/self.total; filled=int(self.width*ratio)
+        bar=self.fill*filled+self.empty*(self.width-filled)
+        parts=[f"{self.text} [{bar}]"]
         if self.show_percent: parts.append(f"{ratio*100:6.2f}%")
         elapsed=time.monotonic()-self.started_at
         if self.show_speed and elapsed>0: parts.append(f"{self.current/elapsed:.2f}/s")
         if self.show_eta and self.current>0 and elapsed>0: parts.append(f"ETA {max(0,(self.total-self.current)/(self.current/elapsed)):.1f}s")
-        self.stream.write(f"\r{CLEAR_LINE}{self.color}{' '.join(parts)}{RESET if self.color else ''}"); self.stream.flush()
+        prefix=self.color or self._fg(self.foreground); bg=self._bg(self.background)
+        self.stream.write(f"\r{CLEAR_LINE}{prefix}{bg}{' '.join(parts)}{RESET if (prefix or bg) else ''}"); self.stream.flush()
         if self.current>=self.total: self.stream.write("\n")
         return self
-    def finish(self): return self.update(self.total)
+
+    def finish(self,message=None):
+        if message is not None: self.text=str(message)
+        return self.update(self.total)
