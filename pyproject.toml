@@ -1,16 +1,20 @@
 [build-system]
-requires = ["setuptools>=61"]
-build-backend = "setuptools.build_meta"
+requires=["setuptools>=61"]
+build-backend="setuptools.build_meta"
 
 [project]
-name = "loadfx"
-version = "1.0.0"
-description = "Terminal loading effects, text effects, progress bars, and interactive menus."
-readme = "README.md"
-requires-python = ">=3.8"
-license = {text = "MIT"}
-authors = [{name = "Tivalsdeveloper"}]
-keywords = ["terminal", "loading", "spinner", "text-effects", "menu", "cli"]
+name="loadfx"
+version="2.0.0"
+description="Zero-dependency Python terminal effects and UI toolkit"
+readme="README.md"
+requires-python=">=3.8"
+license={text="MIT"}
+authors=[{name="Tivalsdeveloper"}]
+keywords=["terminal","cli","tui","spinner","loading","menu","text-effects","progress-bar"]
+classifiers=["Programming Language :: Python :: 3","Programming Language :: Python :: 3 :: Only","License :: OSI Approved :: MIT License","Operating System :: OS Independent","Environment :: Console","Topic :: Software Development :: User Interfaces"]
+
+[project.scripts]
+loadfx="loadfx.cli:main"
 
 [tool.setuptools.packages.find]
-include = ["loadfx*"]
+include=["loadfx*"]
