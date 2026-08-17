@@ -13,7 +13,11 @@ python -m pip install loadfx
 ## Highlights
 
 - 24+ built-in loading effects and custom frames
-- 12 built-in progress-bar styles
+- 14 built-in progress-bar styles
+- Single-line in-place progress by default
+- Iterator, context-manager and decorator progress APIs
+- Multi-progress and indeterminate progress
+- File/download-style byte progress
 - Foreground and background colors, including 256-color values
 - Progress percentage, speed and ETA reporting
 - Custom progress-bar fill and empty characters
@@ -25,7 +29,6 @@ python -m pip install loadfx
 - Terminal forms, file browser, command palette and app shell
 - Notifications and structured logging
 - Built-in themes and task runner
-- Typewriter, slide, fade-in and glitch animations
 - Keyboard callback registry and plugin base class
 - `loadfx` CLI
 - Python 3.8+
@@ -44,67 +47,93 @@ choice = Menu({"Start": "start", "Settings": "settings", "Exit": "exit"}).show()
 print(choice)
 ```
 
-## Loading effects
-
-```python
-from loadfx import Loader
-import time
-
-with Loader("Processing", effect="matrix"):
-    time.sleep(2)
-
-# Custom frames
-Loader("Processing", frames=["[   ]", "[=  ]", "[== ]", "[===]"]).start()
-```
-
-Built-in loading effects include `dots`, `spinner`, `line`, `arrows`, `bounce`, `pulse`, `circle`, `square`, `braille`, `clock`, `wave`, `bars`, `blocks`, `grow`, `shrink`, `orbit`, `arc`, `snake`, `ping`, `heart`, `star`, `matrix`, `scan`, and `moon`.
-
 ## Progress bars
 
-### Basic progress bar
+Progress bars redraw **one terminal line by default**. They do not print a new line for every update.
+
+### Basic
 
 ```python
 from loadfx import ProgressBar
 import time
 
-bar = ProgressBar(100, show_eta=True, show_speed=True)
+bar = ProgressBar(100, label="Downloading", show_eta=True, show_speed=True)
 for i in range(101):
     bar.update(i)
     time.sleep(0.02)
 ```
 
-### Progress-bar styles
+### Different styles
 
-LOADFX includes these built-in styles:
+```python
+for style in ["classic", "dots", "blocks", "stars", "braille", "squares"]:
+    bar = ProgressBar(100, style=style, label=style.title())
+    for i in range(101):
+        bar.update(i)
+```
 
-| Style | Fill | Empty |
-|---|---|---|
-| `classic` | `█` | `░` |
-| `blocks` | `█` | `░` |
-| `dots` | `●` | `○` |
-| `dotline` | `●` | `○` |
-| `arrows` | `>` | `-` |
-| `squares` | `■` | `□` |
-| `circles` | `●` | `○` |
-| `braille` | `⣿` | `⣀` |
-| `pulse` | `●` | `·` |
-| `bars` | `▰` | `▱` |
-| `hash` | `#` | `-` |
-| `equals` | `=` | `-` |
+Available styles:
 
-Example:
+`classic`, `blocks`, `dots`, `dotline`, `small-dots`, `arrows`, `squares`, `circles`, `braille`, `pulse`, `bars`, `hash`, `equals`, `stars`.
+
+### Step updates
+
+```python
+bar = ProgressBar(100, label="Installing")
+for _ in range(20):
+    install_step()
+    bar.update(step=5)
+```
+
+### Context manager
+
+```python
+with ProgressBar(100, label="Building") as bar:
+    for i in range(101):
+        build_step()
+        bar.update(i)
+```
+
+### Iterator helper
+
+```python
+from loadfx import track
+
+for filename in track(files, label="Scanning", style="dots"):
+    scan(filename)
+```
+
+### Indeterminate progress
+
+Use this when the total is unknown:
 
 ```python
 from loadfx import ProgressBar
 
-bar = ProgressBar(100, width=40, style="dots")
-for i in range(101):
-    bar.update(i)
+bar = ProgressBar.indeterminate("Connecting")
+bar.start()
+connect_to_server()
+bar.stop("Connected")
 ```
 
-### Foreground and background colors
+### Multiple bars
 
-Use named terminal colors or integer 256-color indexes:
+```python
+from loadfx import MultiProgress
+
+with MultiProgress() as progress:
+    download = progress.add("Download", 100, style="dots")
+    extract = progress.add("Extract", 100, style="blocks")
+    install = progress.add("Install", 100, style="stars")
+
+    for i in range(101):
+        download.update(i)
+        extract.update(min(i, 100))
+        install.update(min(i * 2, 100))
+        progress.refresh()
+```
+
+### Colors
 
 ```python
 bar = ProgressBar(
@@ -115,42 +144,58 @@ bar = ProgressBar(
 )
 ```
 
-256-color example:
+256-color values are also supported:
 
 ```python
-bar = ProgressBar(
-    100,
-    style="blocks",
-    foreground=51,
-    background=235,
-)
+bar = ProgressBar(100, foreground=51, background=235)
 ```
 
-Supported named foreground/background colors include `black`, `red`, `green`, `yellow`, `blue`, `magenta`, `cyan`, `white`, `gray`, and their `bright_*` variants.
-
-### Custom progress characters
+### Custom characters
 
 ```python
 bar = ProgressBar(
     100,
-    style="dots",
     custom_fill="▓",
     custom_empty="░",
 )
 ```
 
-### Runtime customization
+### Custom output format
 
 ```python
-bar = ProgressBar(100, style="classic")
-
-bar.set_style("braille")
-bar.set_colors("green", "black")
-bar.set_message("Installing")
-bar.update(75)
+bar = ProgressBar(
+    100,
+    format_string="{label} [{bar}] {percent:.0f}% | {speed:.1f}/s | ETA {eta:.1f}s",
+)
 ```
 
-`update()` also accepts `step=`, `message=`, and `progress=`. Use `finish()` to complete the bar.
+Supported fields include `label`, `bar`, `percent`, `current`, `total`, `speed`, `eta` and `elapsed`.
+
+### Stream mode
+
+If you intentionally want every update on its own line:
+
+```python
+bar = ProgressBar(10, mode="stream")
+for i in range(11):
+    bar.update(i)
+```
+
+The default is `mode="single"`.
+
+## Loading effects
+
+```python
+from loadfx import Loader
+import time
+
+with Loader("Processing", effect="matrix"):
+    time.sleep(2)
+
+Loader("Processing", frames=["[   ]", "[=  ]", "[== ]", "[===]"]).start()
+```
+
+Built-in loading effects include `dots`, `spinner`, `line`, `arrows`, `bounce`, `pulse`, `circle`, `square`, `braille`, `clock`, `wave`, `bars`, `blocks`, `grow`, `shrink`, `orbit`, `arc`, `snake`, `ping`, `heart`, `star`, `matrix`, `scan`, and `moon`.
 
 ## Forms
 
@@ -178,33 +223,8 @@ App("My App").header("LOADFX").main("Hello terminal").footer("Ready").run()
 from loadfx import Table, Panel, Tree, FileBrowser, CommandPalette
 
 Table(["Name", "Status"], [["loadfx", "Active"]], style="rounded").show()
-Panel("Terminal toolkit", title="loadfx").show()
-Tree("Project").add("src/loadfx").add("tests").show()
 ```
-
-## Themes and animations
-
-```python
-from loadfx import Theme, Animation
-
-Theme.use("cyberpunk")
-Animation.fade_in("Welcome")
-Animation.glitch("SYSTEM")
-```
-
-## CLI
-
-```bash
-loadfx version
-loadfx effects
-loadfx themes
-loadfx demo
-```
-
-## API
-
-`Loader`, `Spinner`, `ProgressBar`, `TextFX`, `Menu`, `MultiMenu`, `Table`, `Panel`, `Tree`, `Dashboard`, `Terminal`, `notify`, `Logger`, `Theme`, `Tasks`, `Animation`, `Form`, `FileBrowser`, `CommandPalette`, `keyboard`, `Plugin`, and `App`.
 
 ## License
 
-MIT — Tivalsdeveloper
+MIT License. See the repository for the complete source and release history.
