@@ -4,7 +4,7 @@ build-backend="setuptools.build_meta"
 
 [project]
 name="loadfx"
-version="2.3.1"
+version="2.3.3"
 description="Zero-dependency Python terminal effects and UI toolkit with styled progress bars"
 readme="README.md"
 requires-python=">=3.8"
