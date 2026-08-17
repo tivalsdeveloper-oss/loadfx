@@ -1,5 +1,6 @@
-"""loadfx 2.1 - zero-dependency terminal effects and UI toolkit."""
-from .loader import Loader, Spinner, ProgressBar, FRAMES
+"""loadfx 2.2 - zero-dependency terminal effects and UI toolkit."""
+from .loader import Loader, Spinner, FRAMES
+from .progress import ProgressBar, MultiProgress, IndeterminateProgress, FileProgress, DownloadProgress, track, progress, PROGRESS_STYLES
 from .text import TextFX
 from .menu import Menu
 from .widgets import Table, Panel, Tree, MultiMenu, Dashboard
@@ -16,5 +17,5 @@ from .keyboard import keyboard, Keyboard
 from .plugin import Plugin
 from .app import App
 
-__version__="2.1.0"
-__all__=["Loader","Spinner","ProgressBar","FRAMES","TextFX","Menu","MultiMenu","Table","Panel","Tree","Dashboard","Terminal","terminal","Cursor","Notify","notify","Logger","Theme","Tasks","Animation","Form","FileBrowser","CommandPalette","keyboard","Keyboard","Plugin","App"]
+__version__="2.2.0"
+__all__=["Loader","Spinner","FRAMES","ProgressBar","MultiProgress","IndeterminateProgress","FileProgress","DownloadProgress","track","progress","PROGRESS_STYLES","TextFX","Menu","MultiMenu","Table","Panel","Tree","Dashboard","Terminal","terminal","Cursor","Notify","notify","Logger","Theme","Tasks","Animation","Form","FileBrowser","CommandPalette","keyboard","Keyboard","Plugin","App"]
